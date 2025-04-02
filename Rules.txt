@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isValidNumber(value) {
+      return value is number && value >= 0;
+    }
+
+    match /AddOn/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated()
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && isValidNumber(request.resource.data.value);
+    }
+
+    match /Inventory/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated()
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && isValidNumber(request.resource.data.quantity)
+        && isValidNumber(request.resource.data.price);
+    }
+
+    match /Orders/{document=**} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated()
+        && request.resource.data.customer_name is string
+        && request.resource.data.customer_name.size() > 0
+        && request.resource.data.product_id is string
+        && isValidNumber(request.resource.data.quantity)
+        && request.resource.data.payment_type in ['Cash', 'Online']
+        && request.resource.data.order_type in ['Self Pickup', 'Delivery'];
+      allow update, delete: if isAuthenticated();
+    }
+
+    match /Expenses/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated()
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && isValidNumber(request.resource.data.price);
+    }
+
+    // Default deny all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

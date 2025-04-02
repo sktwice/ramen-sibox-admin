@@ -1,0 +1,33 @@
+CREATE TABLE Inventory (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    quantity INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE AddOn (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    value DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE Expenses (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    price DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE Orders (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_name VARCHAR(255) NOT NULL,
+    room_number VARCHAR(50),
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    add_on_id INT,
+    payment_type ENUM('Cash', 'Card', 'Online') NOT NULL,
+    order_type ENUM('Dine-In', 'Takeaway', 'Delivery') NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('Pending', 'Processing', 'Completed', 'Cancelled') NOT NULL DEFAULT 'Pending',
+    FOREIGN KEY (product_id) REFERENCES Inventory(id),
+    FOREIGN KEY (add_on_id) REFERENCES AddOn(id)
+);
