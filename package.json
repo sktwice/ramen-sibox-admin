@@ -1,4 +1,5 @@
 {
+  "homepage": "https://sktwice.github.io/ramen-sibox-admin",
   "name": "ramen-sibox",
   "private": true,
   "version": "0.0.1",
@@ -6,6 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "predeploy": "npm run build",
+    "deploy": "npx gh-pages -d dist",
     "preview": "vite preview"
   },
   "dependencies": {
